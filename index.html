@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>ゆうしゃのしたく LIGHT</title>
+<meta name="description" content="あたらしいなかまと、おうちにかえろう">
+<meta property="og:type" content="website">
+<meta property="og:title" content="ゆうしゃのしたく LIGHT">
+<meta property="og:description" content="あたらしいなかまと、おうちにかえろう">
+<meta property="og:image" content="./ogp.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ゆうしゃのしたく LIGHT">
+<meta name="twitter:description" content="あたらしいなかまと、おうちにかえろう">
+<meta name="twitter:image" content="./ogp.png">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./icon-192.png">
+<meta name="theme-color" content="#1c2d5a">
+<style>
+:root{--bg:#1c2d5a;--p1:#243a72;--p2:#2e4a8c;--in:#172650;--bd:#f4f4f6;--bd2:#dbe4f5;--tx:#f1f5f9;--tx2:#dbe4f5;--yl:#fbbf24;--gold:#f59e0b;--gt:#1a1200;--red:#c53030;--sh:4px 4px 0 rgba(0,0,0,.4)}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--tx);font-family:"Yu Gothic","Hiragino Sans","Meiryo",sans-serif;-webkit-tap-highlight-color:transparent;overscroll-behavior:none}
+body{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding-bottom:2rem}
+.shell{width:100%;max-width:480px;padding:.75rem}
+.win{background:var(--p1);border:4px solid var(--bd);border-radius:4px;box-shadow:var(--sh);padding:1rem;margin-bottom:1rem}
+.hd{display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem;margin-bottom:1rem}
+h1{margin:0;font-size:1.3rem;color:var(--yl);text-shadow:2px 2px 0 rgba(0,0,0,.6)}
+.badge{display:inline-block;font-size:.7rem;border:2px solid var(--bd);border-radius:4px;padding:0 .35rem;margin-left:.4rem;color:var(--tx);vertical-align:middle;text-shadow:none}
+.sub{margin:.25rem 0 0;font-size:.75rem}
+.ibtn{min-width:44px;min-height:44px;background:var(--p2);border:3px solid var(--bd2);border-radius:6px;color:var(--tx);font-size:.7rem;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}
+.huge{width:100%;min-height:68px;font-size:1.1rem;font-weight:bold;color:var(--gt);background:var(--gold);border:4px solid #1a1200;border-radius:10px;box-shadow:var(--sh);cursor:pointer;margin-bottom:.75rem;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.huge small{font-size:.7rem;font-weight:normal}
+.huge:active,.btn:active{transform:translateY(3px)}
+.sos{background:var(--red);color:#fff;border-color:var(--bd)}
+.btn{width:100%;min-height:48px;font-size:.95rem;color:var(--tx);background:var(--p2);border:3px solid var(--bd2);border-radius:8px;cursor:pointer;margin-bottom:.6rem;display:flex;align-items:center;justify-content:center;text-align:center;padding:.3rem .6rem}
+.ghost{background:transparent;font-weight:bold}
+.go{background:var(--gold);color:var(--gt);border:4px solid #1a1200;font-weight:bold}
+.btn-row{display:flex;gap:.5rem}.btn-row .btn{flex:1}
+.ttl{font-size:.9rem;color:var(--yl);margin:0 0 .5rem;font-weight:bold}
+.empty{font-size:.85rem;text-align:center;padding:.8rem 0;margin:0}
+.item{background:var(--p2);border:3px solid var(--bd2);border-radius:8px;padding:.7rem;margin-bottom:.75rem}
+.item-top{display:flex;gap:.7rem;align-items:center;margin-bottom:.6rem}
+.thumb{width:64px;height:64px;border-radius:6px;border:2px solid var(--bd2);object-fit:cover;background:var(--in);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.8rem}
+.iname{font-weight:bold;color:var(--yl);font-size:1.05rem;word-break:break-all}
+.imeta{font-size:.75rem;margin-top:.15rem;word-break:break-all}
+.sr{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+#fb{position:fixed;top:0;left:0;right:0;z-index:999;background:var(--gold);color:var(--gt);text-align:center;font-weight:bold;padding:.9rem 1rem;transform:translateY(-120%);transition:transform .25s;border-bottom:4px solid #1a1200}
+#fb.show{transform:translateY(0)}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;align-items:flex-end;justify-content:center;z-index:500}
+.ov.open{display:flex}
+.box{width:100%;max-width:480px;max-height:90vh;overflow-y:auto;background:var(--p1);border:4px solid var(--bd);border-radius:16px 16px 0 0;padding:1.1rem}
+.box h2{margin:0 0 .6rem;color:var(--yl);font-size:1.1rem;border-bottom:2px dashed var(--bd2);padding-bottom:.5rem}
+.box p,.box li{font-size:.85rem;line-height:1.7}
+label.l{display:block;font-size:.8rem;margin:.6rem 0 .25rem}
+input[type=text],select{width:100%;min-height:48px;background:var(--in);border:2px solid var(--bd2);border-radius:6px;color:var(--tx);padding:.5rem;font-size:1rem}
+.chips{display:flex;flex-wrap:wrap;gap:.4rem;margin:.5rem 0}
+.chip{min-height:44px;padding:0 .8rem;background:var(--p2);border:2px solid var(--bd);border-radius:22px;color:var(--tx);font-size:.9rem;cursor:pointer}
+.pv{width:100%;max-height:200px;object-fit:contain;background:var(--in);border:3px solid var(--bd2);border-radius:6px}
+.hidden{display:none!important}
+.screen{display:none}.screen.active{display:block}
+#cam{position:fixed;inset:0;background:#000;z-index:700;display:none}
+#cam.open{display:block}
+#cam video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cam-top{position:absolute;top:0;left:0;right:0;padding:.75rem;padding-top:calc(.75rem + env(safe-area-inset-top,0px))}
+.cam-bot{position:absolute;bottom:0;left:0;right:0;padding:.75rem;padding-bottom:calc(1rem + env(safe-area-inset-bottom,0px));display:flex;align-items:center;justify-content:space-around;gap:.5rem}
+.cam-bot .btn{width:auto;min-width:84px;margin:0;background:var(--p1)}
+.shut{width:80px;height:80px;border-radius:50%;background:var(--gold);border:5px solid #fff;font-size:1.8rem;cursor:pointer;box-shadow:var(--sh)}
+.shut:active{transform:scale(.94)}
+#card{position:fixed;inset:0;background:var(--red);z-index:800;display:none;flex-direction:column;align-items:center;justify-content:center;padding:1.2rem;text-align:center;overflow-y:auto}
+#card.open{display:flex}
+#card .t{font-size:1.6rem;font-weight:bold;border-bottom:4px solid #fff;padding-bottom:.4rem;margin-bottom:.8rem;color:#fff}
+#card img{max-width:100%;max-height:38vh;border:4px solid #fff;border-radius:6px;margin-bottom:.8rem;background:#000}
+#card .b{font-size:1.1rem;line-height:1.8;color:#fff;max-width:420px;white-space:pre-wrap}
+#card .btn{max-width:200px;margin-top:1.2rem;background:#fff;color:var(--red);border-color:#fff;font-weight:bold}
+.tpl{background:var(--in);border:2px dashed var(--bd2);border-radius:8px;padding:.75rem;font-size:.9rem;line-height:1.6;white-space:pre-wrap}
+footer a{color:#cfd6ff}
+</style>
+</head>
+<body>
+<div id="fb" role="status" aria-live="polite"></div>
+<input type="file" id="f-cap" class="sr" accept="image/*" capture="environment">
+<input type="file" id="f-lib" class="sr" accept="image/*">
+
+<div class="shell">
+ <div class="screen active" id="s-main">
+  <header class="hd">
+   <div><h1>ゆうしゃのしたく<span class="badge">LIGHT</span></h1><p class="sub">あたらしいなかまと、おうちにかえろう</p></div>
+   <button class="ibtn" id="b-help">❓<span>ヘルプ</span></button>
+  </header>
+  <button class="huge" id="b-cam">📸 しゃしんを とる<small>ワンタップで カメラ きどう</small></button>
+  <label class="btn ghost" for="f-lib" role="button">🖼️ ライブラリからえらぶ</label>
+  <button class="huge sos" id="b-sos">🆘 SOS（わすれた！）</button>
+  <div class="win"><div class="ttl">🎒 いまの臨時装備（<span id="cnt">0</span>）</div><div id="list"></div></div>
+  <div class="win"><div class="ttl">🔔 ロックがめんの つうち</div><p id="nst" class="empty" style="padding-top:0"></p>
+   <button class="btn ghost hidden" id="b-perm">🔔 つうちをオンにする</button>
+   <button class="btn ghost hidden" id="b-renot">🔔 つうちを だしなおす</button></div>
+ </div>
+ <div class="screen" id="s-sos">
+  <header class="hd"><div><h1>🆘 さがす</h1><p class="sub">あわてなくて大丈夫。写真を見せて聞いてみよう</p></div><button class="ibtn" id="b-back">⬅️<span>もどる</span></button></header>
+  <label class="l" for="sel">どの荷物？</label><select id="sel"></select>
+  <div class="win" style="margin-top:.8rem"><div class="ttl">📣 レスキューカード</div><div id="prev"></div>
+   <button class="huge sos" id="b-card" style="margin:.8rem 0 0">📣 カードを出す</button></div>
+  <div class="win"><div class="ttl">お店・窓口でのセリフ</div><div class="tpl" id="tpl"></div></div>
+ </div>
+</div>
+
+<div id="cam">
+ <video id="vid" playsinline muted autoplay></video>
+ <div class="cam-top"><div class="win" style="margin:0;padding:.7rem"><div class="ttl" style="margin:0" id="cmsg">📸 荷物を うつしてね</div></div></div>
+ <div class="cam-bot">
+  <button class="btn" id="b-cclose">✖ やめる</button>
+  <button class="shut" id="b-shut" aria-label="さつえい">📸</button>
+  <label class="btn hidden" id="cfb" for="f-cap" role="button">📷 カメラアプリ</label>
+  <label class="btn" id="clib" for="f-lib" role="button">🖼️ えらぶ</label>
+ </div>
+</div>
+
+<div class="ov" id="m-reg"><div class="box">
+ <h2>⚔️ 臨時装備を登録</h2>
+ <img class="pv" id="rpv" alt="">
+ <label class="l" for="rname">なまえ</label>
+ <input type="text" id="rname" maxlength="30" placeholder="例：お土産の箱">
+ <div class="chips" id="chips"></div>
+ <button class="btn ghost" id="b-more">＋ くわしく書く（任意）</button>
+ <div id="more" class="hidden">
+  <label class="l" for="rfeat">とくちょう</label><input type="text" id="rfeat" maxlength="60" placeholder="例：赤い紙袋、持ち手が白">
+  <label class="l" for="rplace">どこで？</label><input type="text" id="rplace" maxlength="40" placeholder="例：駅前のお菓子屋さん">
+ </div>
+ <div class="btn-row" style="margin-top:.8rem"><button class="btn ghost" id="b-rcancel">やめる</button><button class="btn go" id="b-rsave">⚔️ そうびする！</button></div>
+</div></div>
+
+<div class="ov" id="m-help"><div class="box">
+ <h2>❓ つかいかた</h2>
+ <ul><li>出先で荷物が増えたら「📸 しゃしんを とる」で撮影（アルバムからもえらべます）。</li><li>名前を入れて「そうびする！」で、ロック画面に通知が出ます。</li><li>忘れたら「SOS」から写真つきカードを見せましょう。</li><li>カバンにしまったら「そうび解除」で通知とデータが消えます。</li></ul>
+ <p>※ブラウザの通知は、完全に消せない通知にはできません。スワイプで消しても出し直しますが、端末や設定によっては表示されないことがあります。iPhoneはホーム画面に追加したアプリで有効です。</p>
+ <button class="btn" id="b-hclose">とじる</button>
+</div></div>
+
+<div id="card"><div class="t">【おねがい】</div><img id="cimg" class="hidden" alt=""><div class="b" id="ctxt"></div><button class="btn" id="b-cardclose">とじる</button></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  'use strict';
+  var SC = 'yts-light-state';
+  function $(i) { return document.getElementById(i); }
+  function on(i, e, f) { var el = $(i); if (el) el.addEventListener(e, f); }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function uid() { return 'i' + Date.now() + Math.random().toString(36).slice(2, 7); }
+  function p2(n) { return String(n).padStart(2, '0'); }
+  function fmt(t) { try { var d = new Date(t); return d.getFullYear() + '/' + p2(d.getMonth() + 1) + '/' + p2(d.getDate()) + ' ' + p2(d.getHours()) + ':' + p2(d.getMinutes()); } catch (e) { return ''; } }
+  var mem = { items: [] };
+  function lget(k, f) { try { var v = localStorage.getItem(k); return v === null ? f : JSON.parse(v); } catch (e) { return f; } }
+  function lset(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } }
+  var items = lget('ytsl_items', mem.items); if (!Array.isArray(items)) items = [];
+  function save() { if (!lset('ytsl_items', items)) mem.items = items; }
+  var fbT = null;
+  function say(m) { var b = $('fb'); if (!b) return; b.textContent = m; b.classList.add('show'); clearTimeout(fbT); fbT = setTimeout(function () { b.classList.remove('show'); }, 3000); try { if (navigator.vibrate) navigator.vibrate(60); } catch (e) {} }
+  function openM(i) { var m = $(i); if (m) m.classList.add('open'); }
+  function closeM(i) { var m = $(i); if (m) m.classList.remove('open'); }
+  function show(id) { var a = document.querySelectorAll('.screen'); for (var i = 0; i < a.length; i++) a[i].classList.remove('active'); var t = $(id); if (t) t.classList.add('active'); window.scrollTo(0, 0); }
+
+  /* ---- 写真 (IndexedDB + メモリ退避) ---- */
+  var pc = {}, dbp = null;
+  function db() {
+    if (!dbp) dbp = new Promise(function (res, rej) {
+      try { var r = indexedDB.open('ytsl_photos', 1); r.onupgradeneeded = function (e) { e.target.result.createObjectStore('p'); }; r.onsuccess = function (e) { res(e.target.result); }; r.onerror = function () { rej(r.error); }; } catch (e) { rej(e); }
+    });
+    return dbp;
+  }
+  function idb(mode, fn) { return db().then(function (d) { return new Promise(function (res) { try { var tx = d.transaction('p', mode), r = fn(tx.objectStore('p')); tx.oncomplete = function () { res(r && r.result !== undefined ? r.result : true); }; tx.onerror = function () { res(null); }; } catch (e) { res(null); } }); }).catch(function () { return null; }); }
+  function putPhoto(id, o) { pc[id] = o; return idb('readwrite', function (s) { return s.put(o, id); }); }
+  function getPhoto(id) { if (pc[id]) return Promise.resolve(pc[id]); return idb('readonly', function (s) { return s.get(id); }).then(function (v) { if (v && v !== true) { pc[id] = v; return v; } return null; }); }
+  function delPhoto(id) { delete pc[id]; return idb('readwrite', function (s) { return s.delete(id); }); }
+  function scaled(src, sw, sh, max, q) { var r = Math.min(1, max / Math.max(sw, sh)), w = Math.round(sw * r), h = Math.round(sh * r), c = document.createElement('canvas'); c.width = w; c.height = h; c.getContext('2d').drawImage(src, 0, 0, w, h); return c.toDataURL('image/jpeg', q); }
+  function mkSet(src, sw, sh) { return { photo: scaled(src, sw, sh, 960, 0.78), thumb: scaled(src, sw, sh, 320, 0.6) }; }
+  function fileSet(f) { return new Promise(function (res, rej) { var u = URL.createObjectURL(f), im = new Image(); im.onload = function () { try { var s = mkSet(im, im.naturalWidth, im.naturalHeight); URL.revokeObjectURL(u); res(s); } catch (e) { rej(e); } }; im.onerror = function () { rej(new Error('img')); }; im.src = u; }); }
+
+  /* ---- SW状態 (Cache API。SWと共有) ---- */
+  function sUrl() { return new URL('./__yts_state__', location.href).href; }
+  function rState() { return Promise.resolve().then(function () { return caches.open(SC); }).then(function (c) { return c.match(sUrl()); }).then(function (r) { return r ? r.json() : {}; }).catch(function () { return {}; }).then(function (s) { s = s || {}; s.active = s.active || []; s.cleared = s.cleared || []; return s; }); }
+  function uState(fn) { return rState().then(function (s) { fn(s); return caches.open(SC).then(function (c) { return c.put(sUrl(), new Response(JSON.stringify(s), { headers: { 'Content-Type': 'application/json' } })); }); }).catch(function () {}); }
+
+  /* ---- 通知 ---- */
+  var rp = null;
+  function getReg() {
+    if (rp) return rp;
+    rp = new Promise(function (res) {
+      try {
+        if (!('serviceWorker' in navigator)) { res(null); return; }
+        var t = setTimeout(function () { res(null); }, 3000);
+        navigator.serviceWorker.ready.then(function (r) { clearTimeout(t); res(r); }).catch(function () { res(null); });
+      } catch (e) { res(null); }
+    }).then(function (r) { if (!r) rp = null; return r; });
+    return rp;
+  }
+  function perm() { try { return 'Notification' in window ? Notification.permission : 'unsupported'; } catch (e) { return 'unsupported'; } }
+  function ask() { return new Promise(function (res) { try { if (perm() === 'unsupported') { res('unsupported'); return; } var p = Notification.requestPermission(function (v) { res(v); }); if (p && p.then) p.then(res).catch(function () { res(perm()); }); } catch (e) { res(perm()); } }); }
+  function opts(it, th, silent) {
+    var o = { body: 'いっしょに おうちへ かえろう！（' + fmt(it.createdAt) + ' とうろく）', tag: 'ytsl-' + it.id, requireInteraction: true, silent: !!silent, renotify: !silent, badge: './icon-192.png', timestamp: it.createdAt, data: { id: it.id, thumb: th || null }, actions: [{ action: 'clear', title: 'そうび解除' }] };
+    if (th) { o.icon = th; o.image = th; } else o.icon = './icon-192.png';
+    return o;
+  }
+  function notify(it, silent) {
+    if (perm() !== 'granted') return Promise.resolve();
+    var title = '【臨時装備】' + it.name + ' をわすれるな！';
+    return Promise.all([getReg(), getPhoto(it.id)]).then(function (a) {
+      var reg = a[0], th = a[1] && a[1].thumb;
+      if (!reg) { try { new Notification(title, opts(it, th, silent)); } catch (e) {} return; }
+      return reg.showNotification(title, opts(it, th, silent)).catch(function () { var o = opts(it, null, silent); return reg.showNotification(title, o); });
+    }).catch(function () {});
+  }
+  function ensure() {
+    if (perm() !== 'granted') return;
+    getReg().then(function (reg) {
+      if (!reg) return;
+      items.forEach(function (it) { reg.getNotifications({ tag: 'ytsl-' + it.id }).then(function (l) { if (!l.length) notify(it, true); }).catch(function () {}); });
+    });
+  }
+  function closeNotes(id) {
+    return uState(function (s) { s.active = s.active.filter(function (x) { return x !== id; }); }).then(getReg).then(function (reg) {
+      if (!reg) return;
+      return reg.getNotifications({ tag: 'ytsl-' + id }).then(function (l) { l.forEach(function (n) { n.close(); }); });
+    }).catch(function () {});
+  }
+
+  /* ---- 描画 ---- */
+  function nst() {
+    var p = perm(), t = $('nst');
+    if (!t) return;
+    t.textContent = p === 'granted' ? '🔔 ON：登録した荷物を ロックがめんに ひょうじします' : p === 'denied' ? '🔕 ブロック中：ブラウザのせっていで 通知を ゆるしてね' : p === 'unsupported' ? '🔕 このブラウザは 通知に たいおうしていません' : '🔕 まだ OFF：通知をオンにすると ロックがめんで 見はれます';
+    $('b-perm').classList.toggle('hidden', p !== 'default');
+    $('b-renot').classList.toggle('hidden', !(p === 'granted' && items.length));
+  }
+  function render() {
+    var l = $('list'); if (!l) return;
+    $('cnt').textContent = items.length;
+    l.innerHTML = '';
+    if (!items.length) { l.innerHTML = '<p class="empty">まだ臨時装備は ありません。荷物が増えたら「しゃしんを とる」！</p>'; }
+    items.forEach(function (it) {
+      var d = document.createElement('div'); d.className = 'item';
+      d.innerHTML = '<div class="item-top"><div class="thumb">🎁</div><div><div class="iname">' + esc(it.name) + '</div><div class="imeta">' + esc(fmt(it.createdAt)) + ' とうろく' + (it.place ? '<br>📍 ' + esc(it.place) : '') + (it.feature ? '<br>🔎 ' + esc(it.feature) : '') + '</div></div></div>';
+      var b1 = document.createElement('button'); b1.className = 'btn'; b1.textContent = '📣 レスキューカード';
+      b1.addEventListener('click', function () { card(it); });
+      var b2 = document.createElement('button'); b2.className = 'btn go'; b2.textContent = '✅ そうび解除（クエストクリア）';
+      b2.addEventListener('click', function () { clearItem(it.id, true); });
+      d.appendChild(b1); d.appendChild(b2); l.appendChild(d);
+      getPhoto(it.id).then(function (p) { if (p && p.thumb) { var im = document.createElement('img'); im.className = 'thumb'; im.alt = it.name; im.src = p.thumb; var o = d.querySelector('.thumb'); if (o) o.replaceWith(im); } });
+    });
+    nst();
+  }
+  function clearItem(id, byUser) {
+    var it = items.filter(function (x) { return x.id === id; })[0];
+    items = items.filter(function (x) { return x.id !== id; }); save(); delPhoto(id); closeNotes(id); render(); sos();
+    if (it && byUser) say('クエストクリア！ ' + it.name + ' を カバンに しまった！');
+  }
+
+  /* ---- カメラ ---- */
+  var stream = null;
+  function stopCam() { try { if (stream) stream.getTracks().forEach(function (t) { t.stop(); }); } catch (e) {} stream = null; var v = $('vid'); if (v) v.srcObject = null; }
+  function closeCam() { stopCam(); var c = $('cam'); if (c) c.classList.remove('open'); }
+  function openCam() {
+    var c = $('cam'); if (!c) return; c.classList.add('open');
+    $('cmsg').textContent = '📸 荷物を うつしてね'; $('cfb').classList.add('hidden'); $('b-shut').classList.remove('hidden');
+    function fail() { $('cmsg').textContent = 'カメラを つかえません。「📷 カメラアプリ」か「🖼️ えらぶ」を おしてね'; $('cfb').classList.remove('hidden'); $('b-shut').classList.add('hidden'); }
+    try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { fail(); return; }
+      navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } }, audio: false }).then(function (s) { stream = s; var v = $('vid'); v.srcObject = s; var p = v.play(); if (p && p.catch) p.catch(function () {}); }).catch(fail);
+    } catch (e) { fail(); }
+  }
+  on('b-cam', 'click', openCam);
+  on('b-cclose', 'click', closeCam);
+  on('b-shut', 'click', function () {
+    try { var v = $('vid'); if (!v || !v.videoWidth) { say('カメラの じゅんびちゅう…もういちど！'); return; } var s = mkSet(v, v.videoWidth, v.videoHeight); closeCam(); reg(s); } catch (e) { say('さつえいに しっぱいしました'); }
+  });
+  function onFile(e) {
+    var f = e.target.files && e.target.files[0]; if (!f) return;
+    fileSet(f).then(function (s) { closeCam(); reg(s); }).catch(function () { say('しゃしんを よみこめませんでした'); });
+    e.target.value = '';
+  }
+  on('f-cap', 'change', onFile); on('f-lib', 'change', onFile);
+  document.addEventListener('visibilitychange', function () { if (document.hidden) closeCam(); else { ensure(); nst(); } });
+
+  /* ---- 登録 ---- */
+  var pending = null, chipList = ['お土産の箱', '紙袋', '買い物袋', 'お菓子', '傘', 'その他'];
+  var ch = $('chips');
+  if (ch) chipList.forEach(function (n) { var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = n; b.addEventListener('click', function () { $('rname').value = n; }); ch.appendChild(b); });
+  function reg(s) {
+    pending = s; $('rpv').src = s.photo; $('rname').value = ''; $('rfeat').value = ''; $('rplace').value = ''; $('more').classList.add('hidden'); openM('m-reg');
+    setTimeout(function () { try { $('rname').focus(); } catch (e) {} }, 150);
+  }
+  on('b-more', 'click', function () { $('more').classList.toggle('hidden'); });
+  on('b-rcancel', 'click', function () { pending = null; closeM('m-reg'); });
+  on('b-rsave', 'click', function () {
+    if (!pending) return;
+    var it = { id: uid(), name: ($('rname').value.trim() || 'あたらしいなかま').slice(0, 30), feature: $('rfeat').value.trim(), place: $('rplace').value.trim(), createdAt: Date.now() };
+    putPhoto(it.id, pending); pending = null; items.unshift(it); save();
+    uState(function (s) { if (s.active.indexOf(it.id) < 0) s.active.push(it.id); });
+    closeM('m-reg'); render(); say('⚔️ ' + it.name + ' を そうびした！');
+    function after() { notify(it, false).then(function () { nst(); if (perm() === 'granted') say('🔔 ロックがめんに つうちを セットしたよ！'); }); }
+    if (perm() === 'default') ask().then(after); else after();
+  });
+
+  /* ---- SOS / レスキューカード ---- */
+  function cur() { var s = $('sel'); return items.filter(function (x) { return s && x.id === s.value; })[0] || null; }
+  function sos() {
+    var s = $('sel'); if (!s) return; var old = s.value; s.innerHTML = '';
+    items.forEach(function (it) { var o = document.createElement('option'); o.value = it.id; o.textContent = it.name; s.appendChild(o); });
+    if (old) s.value = old;
+    var it = cur(), pv = $('prev'), tp = $('tpl');
+    if (!it) { pv.innerHTML = '<p class="empty">臨時装備が ありません</p>'; tp.textContent = ''; return; }
+    pv.innerHTML = '<div class="iname">' + esc(it.name) + '</div><div class="imeta">' + esc(fmt(it.createdAt)) + ' とうろく' + (it.place ? '<br>📍 ' + esc(it.place) : '') + (it.feature ? '<br>🔎 ' + esc(it.feature) : '') + '</div>';
+    getPhoto(it.id).then(function (p) { if (p && p.photo && cur() === it) { var im = document.createElement('img'); im.className = 'pv'; im.style.marginTop = '.5rem'; im.alt = it.name; im.src = p.photo; pv.appendChild(im); } });
+    tp.textContent = 'すみません、荷物の相談です。\nなまえ：' + it.name + '\nとくちょう：' + (it.feature || '写真のとおりです') + '\n最後にいた場所：' + (it.place || 'わかりません') + '\n見つかったら、連絡をお願いします。';
+  }
+  on('sel', 'change', sos);
+  on('b-sos', 'click', function () { if (!items.length) { say('まだ 臨時装備が ありません'); return; } sos(); show('s-sos'); });
+  on('b-back', 'click', function () { show('s-main'); });
+  function card(it) {
+    if (!it) return;
+    $('ctxt').textContent = 'いっしょに帰るはずの「' + it.name + '」を、わすれてしまったかもしれません。\n' + (it.feature ? '特徴：' + it.feature + '\n' : '') + (it.place ? '最後にいた場所：' + it.place + '\n' : '') + fmt(it.createdAt) + ' に持っていました。\n見つけたら教えてください。よろしくお願いします。';
+    var im = $('cimg'); im.classList.add('hidden'); im.removeAttribute('src');
+    getPhoto(it.id).then(function (p) { if (p && p.photo) { im.src = p.photo; im.classList.remove('hidden'); } });
+    $('card').classList.add('open');
+  }
+  on('b-card', 'click', function () { card(cur()); });
+  on('b-cardclose', 'click', function () { $('card').classList.remove('open'); });
+
+  /* ---- ヘルプ / 通知ボタン ---- */
+  on('b-help', 'click', function () { openM('m-help'); });
+  on('b-hclose', 'click', function () { closeM('m-help'); });
+  on('b-perm', 'click', function () { ask().then(function () { nst(); ensure(); items.forEach(function (it) { notify(it, false); }); }); });
+  on('b-renot', 'click', function () { items.forEach(function (it) { notify(it, false); }); say('つうちを だしなおしました'); });
+
+  /* ---- SW登録・メッセージ ---- */
+  try {
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () { try { navigator.serviceWorker.register('./sw.js').catch(function () {}); } catch (e) {} });
+      navigator.serviceWorker.addEventListener('message', function (e) {
+        var d = e.data || {};
+        if (d.type === 'cleared' && d.id) { items = items.filter(function (x) { return x.id !== d.id; }); save(); delPhoto(d.id); uState(function (s) { s.cleared = s.cleared.filter(function (x) { return x !== d.id; }); }); render(); sos(); say('クエストクリア！ つうちから そうび解除しました'); }
+      });
+    }
+  } catch (e) {}
+
+  /* ---- 起動 ---- */
+  try {
+    rState().then(function (s) {
+      var cl = s.cleared;
+      if (cl.length) { items = items.filter(function (x) { return cl.indexOf(x.id) < 0; }); save(); cl.forEach(delPhoto); }
+      return uState(function (t) { t.cleared = []; t.active = items.map(function (x) { return x.id; }); });
+    }).then(function () { render(); sos(); ensure(); });
+    render(); sos();
+    if (/[?&]action=camera/.test(location.search)) openCam();
+  } catch (e) { console.warn(e); }
+});
+</script>
+
+<footer style="text-align: center; font-size: 0.75rem; color: #888; margin-top: 3rem; padding: 1rem 0.5rem; line-height: 1.5;">
+  <p style="margin-bottom: 0.5rem;">【ご利用について】</p>
+  <p style="margin-bottom: 0.5rem;">本アプリの利用に伴うトラブルやデータ損失等について、開発者は一切の責任を負いかねます。</p>
+  <p style="margin-bottom: 0.5rem;">ご意見・不具合のご報告は X（<a href="https://x.com/lblt_labo" target="_blank" rel="noopener" style="color: #666; text-decoration: underline;">@lblt_labo</a>）までお願いいたします。</p>
+  <p style="margin-top: 0.5rem;"><a href="https://ofuse.me/lbltlabo/letter" target="_blank" rel="noopener noreferrer" style="color: #666; text-decoration: underline;">☕️ 開発者を応援する / メッセージを送る</a></p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "id": "./index.html",
+  "name": "ゆうしゃのしたく LIGHT",
+  "short_name": "したくLIGHT",
+  "description": "あたらしいなかまと、おうちにかえろう",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1c2d5a",
+  "theme_color": "#1c2d5a",
+  "lang": "ja",
+  "icons": [
+    { "src": "./icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "写真をとる",
+      "short_name": "撮影",
+      "description": "すぐカメラを起動して臨時装備を登録",
+      "url": "./index.html?action=camera"
+    }
+  ]
+}
