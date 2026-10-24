@@ -29,7 +29,7 @@ function reshow(n) {
     body: n.body, tag: n.tag, icon: n.icon, badge: n.badge, data: d,
     requireInteraction: true, silent: true, renotify: false,
     timestamp: n.timestamp,
-    actions: [{ action: 'clear', title: 'そうび解除' }]
+    actions: [{ action: 'clear', title: 'もくてきちについた！' }]
   };
   if (d.thumb) o.image = d.thumb;
   return self.registration.showNotification(n.title, o);

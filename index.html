@@ -73,6 +73,15 @@ input[type=text],select{width:100%;min-height:48px;background:var(--in);border:2
 #card .b{font-size:1.1rem;line-height:1.8;color:#fff;max-width:420px;white-space:pre-wrap}
 #card .btn{max-width:200px;margin-top:1.2rem;background:#fff;color:var(--red);border-color:#fff;font-weight:bold}
 .tpl{background:var(--in);border:2px dashed var(--bd2);border-radius:8px;padding:.75rem;font-size:.9rem;line-height:1.6;white-space:pre-wrap}
+#clr{position:fixed;inset:0;background:var(--p1);border:8px solid var(--bd);z-index:900;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:1.2rem}
+#clr.open{display:flex}
+#clr .t{font-size:1.9rem;font-weight:bold;color:var(--yl);margin-bottom:.8rem;text-shadow:2px 2px 0 rgba(0,0,0,.6)}
+#clr .b{font-size:1.1rem;line-height:1.8;white-space:pre-wrap}
+@keyframes pop{0%{transform:scale(.5)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+#clr.open .t{animation:pop .5s}
+.eq{position:sticky;top:env(safe-area-inset-top,0px);z-index:100;background:var(--p1);border:4px solid var(--bd);border-radius:4px;box-shadow:var(--sh);padding:.5rem .8rem;margin-bottom:.8rem;max-height:34vh;overflow-y:auto}
+.eq .ttl{margin:0 0 .3rem;font-size:.8rem}
+.eq .r{font-size:.9rem;font-weight:bold;word-break:break-all;padding:.15rem 0}
 footer a{color:#cfd6ff}
 </style>
 </head>
@@ -82,6 +91,7 @@ footer a{color:#cfd6ff}
 <input type="file" id="f-lib" class="sr" accept="image/*">
 
 <div class="shell">
+ <div id="eq" class="eq hidden" role="status" aria-live="polite"></div>
  <div class="screen active" id="s-main">
   <header class="hd">
    <div><h1>ゆうしゃのしたく<span class="badge">LIGHT</span></h1><p class="sub">あたらしいなかまと、おうちにかえろう</p></div>
@@ -91,6 +101,9 @@ footer a{color:#cfd6ff}
    <label class="l" for="rname">なまえ（これだけでOK）</label>
    <input type="text" id="rname" maxlength="30" placeholder="例：お土産の箱" autocomplete="off">
    <div class="chips" id="chips"></div>
+   <label class="l" for="rdest">もくてきち（初期：マイホーム）</label>
+   <input type="text" id="rdest" maxlength="30" value="マイホーム" autocomplete="off">
+   <div class="chips" id="dchips"></div>
    <label class="l">しゃしん（なくてもOK）</label>
    <div class="btn-row"><button class="btn ghost" id="b-cam">📸 とる</button><label class="btn ghost" for="f-lib" role="button">🖼️ アルバム</label></div>
    <div id="pwrap" class="hidden"><img class="pv" id="rpv" alt=""><button class="btn ghost" id="b-pdel" style="margin-top:.5rem">✖ しゃしんを はずす</button></div>
@@ -128,10 +141,12 @@ footer a{color:#cfd6ff}
 
 <div class="ov" id="m-help"><div class="box">
  <h2>❓ つかいかた</h2>
- <ul><li>出先で荷物が増えたら、名前を入れて「そうびする！」。ロック画面に通知が出ます。</li><li>写真は「📸 とる」か「🖼️ アルバム」で追加できます（なくてもOK）。写真があれば通知やカードにも出ます。</li><li>忘れたら「SOS」から写真つきカードを見せましょう。</li><li>カバンにしまったら「そうび解除」で通知とデータが消えます。</li></ul>
+ <ul><li>出先で荷物が増えたら、名前と目的地（初期はマイホーム）を入れて「そうびする！」。ロック画面に通知が出ます。</li><li>写真は「📸 とる」か「🖼️ アルバム」で追加できます（なくてもOK）。写真があれば通知やカードにも出ます。</li><li>忘れたら「SOS」から写真つきカードを見せましょう。</li><li>目的地についたら「もくてきちに ついた！」で通知とデータが消え、クリア演出が出ます。</li></ul>
  <p>※ブラウザの通知は、完全に消せない通知にはできません。スワイプで消しても出し直しますが、端末や設定によっては表示されないことがあります。iPhoneはホーム画面に追加したアプリで有効です。</p>
  <button class="btn" id="b-hclose">とじる</button>
 </div></div>
+
+<div id="clr"><div class="t">🎉 クエストクリア！</div><div class="b" id="clrtxt"></div></div>
 
 <div id="card"><div class="t">【おねがい】</div><img id="cimg" class="hidden" alt=""><div class="b" id="ctxt"></div><button class="btn" id="b-cardclose">とじる</button></div>
 
@@ -193,16 +208,16 @@ document.addEventListener('DOMContentLoaded', function () {
   function perm() { try { return 'Notification' in window ? Notification.permission : 'unsupported'; } catch (e) { return 'unsupported'; } }
   function ask() { return new Promise(function (res) { try { if (perm() === 'unsupported') { res('unsupported'); return; } var p = Notification.requestPermission(function (v) { res(v); }); if (p && p.then) p.then(res).catch(function () { res(perm()); }); } catch (e) { res(perm()); } }); }
   function opts(it, th, silent) {
-    var o = { body: 'いっしょに おうちへ かえろう！（' + fmt(it.createdAt) + ' とうろく）', tag: 'ytsl-' + it.id, requireInteraction: true, silent: !!silent, renotify: !silent, badge: './icon-192.png', timestamp: it.createdAt, data: { id: it.id, thumb: th || null }, actions: [{ action: 'clear', title: 'そうび解除' }] };
+    var o = { body: 'いっしょに ' + (it.dest || 'おうち') + ' へ むかおう！（' + fmt(it.createdAt) + ' とうろく）', tag: 'ytsl-' + it.id, requireInteraction: true, silent: !!silent, renotify: !silent, badge: './icon-192.png', timestamp: it.createdAt, data: { id: it.id, thumb: th || null }, actions: [{ action: 'clear', title: 'もくてきちについた！' }] };
     if (th) { o.icon = th; o.image = th; } else o.icon = './icon-192.png';
     return o;
   }
   function notify(it, silent) {
     if (perm() !== 'granted') return Promise.resolve();
-    var title = '【臨時装備】' + it.name + ' をわすれるな！';
+    var title = '【臨時装備】' + it.name + ' をわすれるな！' + (it.dest ? '（目的地：' + it.dest + '）' : '');
     return Promise.all([getReg(), getPhoto(it.id)]).then(function (a) {
       var reg = a[0], th = a[1] && a[1].thumb;
-      if (!reg) { try { new Notification(title, opts(it, th, silent)); } catch (e) {} return; }
+      if (!reg) return;
       return reg.showNotification(title, opts(it, th, silent)).catch(function () { var o = opts(it, null, silent); return reg.showNotification(title, o); });
     }).catch(function () {});
   }
@@ -224,9 +239,9 @@ document.addEventListener('DOMContentLoaded', function () {
   function nst() {
     var p = perm(), t = $('nst');
     if (!t) return;
-    t.textContent = p === 'granted' ? '🔔 ON：登録した荷物を ロックがめんに ひょうじします' : p === 'denied' ? '🔕 ブロック中：ブラウザのせっていで 通知を ゆるしてね' : p === 'unsupported' ? '🔕 このブラウザは 通知に たいおうしていません' : '🔕 まだ OFF：通知をオンにすると ロックがめんで 見はれます';
-    $('b-perm').classList.toggle('hidden', p !== 'default');
-    $('b-renot').classList.toggle('hidden', !(p === 'granted' && items.length));
+    t.textContent = p === 'granted' ? '🔔 ON：登録した荷物を ロックがめんに ひょうじします' : p === 'denied' ? '🔕 ブロック中：ブラウザのせっていで 通知を ゆるしてね' : p === 'unsupported' ? '🔕 このブラウザは 通知に たいおうしていません' : '🔕 まだ OFF：最初の登録のとき 通知の きょかを おねがいします（その間も この画面で 見はれます）';
+    $('b-perm').classList.add('hidden');
+    $('b-renot').classList.toggle('hidden', !(p === 'granted' && items.length)); renderEq();
   }
   function render() {
     var l = $('list'); if (!l) return;
@@ -235,20 +250,35 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!items.length) { l.innerHTML = '<p class="empty">まだ臨時装備は ありません。荷物が増えたら、名前を入れて「そうびする！」</p>'; }
     items.forEach(function (it) {
       var d = document.createElement('div'); d.className = 'item';
-      d.innerHTML = '<div class="item-top"><div class="thumb">🎁</div><div><div class="iname">' + esc(it.name) + '</div><div class="imeta">' + esc(fmt(it.createdAt)) + ' とうろく' + (it.place ? '<br>📍 ' + esc(it.place) : '') + (it.feature ? '<br>🔎 ' + esc(it.feature) : '') + '</div></div></div>';
+      d.innerHTML = '<div class="item-top"><div class="thumb">🎁</div><div><div class="iname">' + esc(it.name) + '</div><div class="imeta">🏁 ' + esc(it.dest || 'マイホーム') + ' へ<br>' + esc(fmt(it.createdAt)) + ' とうろく' + (it.place ? '<br>📍 ' + esc(it.place) : '') + (it.feature ? '<br>🔎 ' + esc(it.feature) : '') + '</div></div></div>';
       var b1 = document.createElement('button'); b1.className = 'btn'; b1.textContent = '📣 レスキューカード';
       b1.addEventListener('click', function () { card(it); });
-      var b2 = document.createElement('button'); b2.className = 'btn go'; b2.textContent = '✅ そうび解除（クエストクリア）';
+      var b2 = document.createElement('button'); b2.className = 'btn go'; b2.textContent = '🏁 もくてきちに ついた！';
       b2.addEventListener('click', function () { clearItem(it.id, true); });
       d.appendChild(b1); d.appendChild(b2); l.appendChild(d);
       getPhoto(it.id).then(function (p) { if (p && p.thumb) { var im = document.createElement('img'); im.className = 'thumb'; im.alt = it.name; im.src = p.thumb; var o = d.querySelector('.thumb'); if (o) o.replaceWith(im); } });
     });
     nst();
   }
+  function renderEq() {
+    var e = $('eq'); if (!e) return;
+    if (!items.length) { e.classList.add('hidden'); e.innerHTML = ''; return; }
+    e.classList.remove('hidden');
+    var h = '<div class="ttl">⚔️ そうびちゅう（' + items.length + '）</div>';
+    items.forEach(function (it) { h += '<div class="r">【臨時装備】' + esc(it.name) + ' / 目的地：' + esc(it.dest || 'マイホーム') + '</div>'; });
+    if (perm() !== 'granted') h += '<div class="imeta">🔕 OSの通知は OFF：この画面が 見はり役です</div>';
+    e.innerHTML = h;
+  }
   function clearItem(id, byUser) {
     var it = items.filter(function (x) { return x.id === id; })[0];
     items = items.filter(function (x) { return x.id !== id; }); save(); delPhoto(id); closeNotes(id); render(); sos();
-    if (it && byUser) say('クエストクリア！ ' + it.name + ' を カバンに しまった！');
+    if (it && byUser) clearFx(it);
+  }
+  function clearFx(it) {
+    var c = $('clr'); if (!c) return;
+    $('clrtxt').textContent = '「' + it.name + '」は ' + (it.dest || 'もくてきち') + ' に ぶじ とうちゃく！\nおつかれさま。いっしょに かえれたね。';
+    c.classList.add('open'); try { if (navigator.vibrate) navigator.vibrate([80, 40, 80, 40, 160]); } catch (e) {}
+    setTimeout(function () { c.classList.remove('open'); }, 2600);
   }
 
   /* ---- カメラ ---- */
@@ -282,16 +312,19 @@ document.addEventListener('DOMContentLoaded', function () {
   var ch = $('chips');
   if (ch) chipList.forEach(function (n) { var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = n; b.addEventListener('click', function () { $('rname').value = n; }); ch.appendChild(b); });
   function reg(s) { pending = s; $('rpv').src = s.photo; $('pwrap').classList.remove('hidden'); say('📎 しゃしんを つけました'); }
+  var dch = $('dchips');
+  if (dch) ['マイホーム', 'ホテル', '次のお店', '実家'].forEach(function (n) { var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = n; b.addEventListener('click', function () { $('rdest').value = n; }); dch.appendChild(b); });
+  on('clr', 'click', function () { var c = $('clr'); if (c) c.classList.remove('open'); });
   on('b-pdel', 'click', function () { pending = null; $('pwrap').classList.add('hidden'); });
   on('rname', 'keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); var b = $('b-rsave'); if (b) b.click(); } });
   on('b-more', 'click', function () { $('more').classList.toggle('hidden'); });
   on('b-rcancel', 'click', function () { pending = null; closeM('m-reg'); });
   on('b-rsave', 'click', function () {
-    var it = { id: uid(), name: ($('rname').value.trim() || 'あたらしいなかま').slice(0, 30), feature: $('rfeat').value.trim(), place: $('rplace').value.trim(), createdAt: Date.now() };
+    var it = { id: uid(), name: ($('rname').value.trim() || 'あたらしいなかま').slice(0, 30), dest: ($('rdest').value.trim() || 'マイホーム').slice(0, 30), feature: $('rfeat').value.trim(), place: $('rplace').value.trim(), createdAt: Date.now() };
     if (pending) putPhoto(it.id, pending); pending = null; items.unshift(it); save();
     uState(function (s) { if (s.active.indexOf(it.id) < 0) s.active.push(it.id); });
-    $('rname').value = ''; $('rfeat').value = ''; $('rplace').value = ''; $('more').classList.add('hidden'); $('pwrap').classList.add('hidden'); render(); say('⚔️ ' + it.name + ' を そうびした！');
-    function after() { notify(it, false).then(function () { nst(); if (perm() === 'granted') say('🔔 ロックがめんに つうちを セットしたよ！'); }); }
+    $('rname').value = ''; $('rdest').value = 'マイホーム'; $('rfeat').value = ''; $('rplace').value = ''; $('more').classList.add('hidden'); $('pwrap').classList.add('hidden'); render(); say('⚔️ ' + it.name + ' を そうびした！');
+    function after() { notify(it, false).then(function () { nst(); say(perm() === 'granted' ? '🔔 ロックがめんに つうちを セットしたよ！' : '📋 通知は OFF：この画面の「そうびちゅう」で 見はるよ'); }); }
     if (perm() === 'default') ask().then(after); else after();
   });
 
@@ -303,16 +336,16 @@ document.addEventListener('DOMContentLoaded', function () {
     if (old) s.value = old;
     var it = cur(), pv = $('prev'), tp = $('tpl');
     if (!it) { pv.innerHTML = '<p class="empty">臨時装備が ありません</p>'; tp.textContent = ''; return; }
-    pv.innerHTML = '<div class="iname">' + esc(it.name) + '</div><div class="imeta">' + esc(fmt(it.createdAt)) + ' とうろく' + (it.place ? '<br>📍 ' + esc(it.place) : '') + (it.feature ? '<br>🔎 ' + esc(it.feature) : '') + '</div>';
+    pv.innerHTML = '<div class="iname">' + esc(it.name) + '</div><div class="imeta">🏁 もくてきち：' + esc(it.dest || 'マイホーム') + '<br>' + esc(fmt(it.createdAt)) + ' とうろく' + (it.place ? '<br>📍 ' + esc(it.place) : '') + (it.feature ? '<br>🔎 ' + esc(it.feature) : '') + '</div>';
     getPhoto(it.id).then(function (p) { if (p && p.photo && cur() === it) { var im = document.createElement('img'); im.className = 'pv'; im.style.marginTop = '.5rem'; im.alt = it.name; im.src = p.photo; pv.appendChild(im); } });
-    tp.textContent = 'すみません、荷物の相談です。\nなまえ：' + it.name + '\nとくちょう：' + (it.feature || '写真のとおりです') + '\n最後にいた場所：' + (it.place || 'わかりません') + '\n見つかったら、連絡をお願いします。';
+    tp.textContent = 'すみません、荷物の相談です。\nなまえ：' + it.name + '\nもくてきち：' + (it.dest || 'マイホーム') + '\nとくちょう：' + (it.feature || '写真のとおりです') + '\n最後にいた場所：' + (it.place || 'わかりません') + '\n見つかったら、連絡をお願いします。';
   }
   on('sel', 'change', sos);
   on('b-sos', 'click', function () { if (!items.length) { say('まだ 臨時装備が ありません'); return; } sos(); show('s-sos'); });
   on('b-back', 'click', function () { show('s-main'); });
   function card(it) {
     if (!it) return;
-    $('ctxt').textContent = 'いっしょに帰るはずの「' + it.name + '」を、わすれてしまったかもしれません。\n' + (it.feature ? '特徴：' + it.feature + '\n' : '') + (it.place ? '最後にいた場所：' + it.place + '\n' : '') + fmt(it.createdAt) + ' に持っていました。\n見つけたら教えてください。よろしくお願いします。';
+    $('ctxt').textContent = 'いっしょに帰るはずの「' + it.name + '」を、わすれてしまったかもしれません。\n目的地：' + (it.dest || 'マイホーム') + '\n' + (it.feature ? '特徴：' + it.feature + '\n' : '') + (it.place ? '最後にいた場所：' + it.place + '\n' : '') + fmt(it.createdAt) + ' に持っていました。\n見つけたら教えてください。よろしくお願いします。';
     var im = $('cimg'); im.classList.add('hidden'); im.removeAttribute('src');
     getPhoto(it.id).then(function (p) { if (p && p.photo) { im.src = p.photo; im.classList.remove('hidden'); } });
     $('card').classList.add('open');
@@ -332,7 +365,7 @@ document.addEventListener('DOMContentLoaded', function () {
       window.addEventListener('load', function () { try { navigator.serviceWorker.register('./sw.js').catch(function () {}); } catch (e) {} });
       navigator.serviceWorker.addEventListener('message', function (e) {
         var d = e.data || {};
-        if (d.type === 'cleared' && d.id) { items = items.filter(function (x) { return x.id !== d.id; }); save(); delPhoto(d.id); uState(function (s) { s.cleared = s.cleared.filter(function (x) { return x !== d.id; }); }); render(); sos(); say('クエストクリア！ つうちから そうび解除しました'); }
+        if (d.type === 'cleared' && d.id) { items = items.filter(function (x) { return x.id !== d.id; }); save(); delPhoto(d.id); uState(function (s) { s.cleared = s.cleared.filter(function (x) { return x !== d.id; }); }); render(); sos(); say('🎉 クエストクリア！ つうちから とうちゃくを きろくしました'); }
       });
     }
   } catch (e) {}
