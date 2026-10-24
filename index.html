@@ -87,8 +87,19 @@ footer a{color:#cfd6ff}
    <div><h1>ゆうしゃのしたく<span class="badge">LIGHT</span></h1><p class="sub">あたらしいなかまと、おうちにかえろう</p></div>
    <button class="ibtn" id="b-help">❓<span>ヘルプ</span></button>
   </header>
-  <button class="huge" id="b-cam">📸 しゃしんを とる<small>ワンタップで カメラ きどう</small></button>
-  <label class="btn ghost" for="f-lib" role="button">🖼️ ライブラリからえらぶ</label>
+  <div class="win"><div class="ttl">⚔️ あたらしい なかまを そうび</div>
+   <label class="l" for="rname">なまえ（これだけでOK）</label>
+   <input type="text" id="rname" maxlength="30" placeholder="例：お土産の箱" autocomplete="off">
+   <div class="chips" id="chips"></div>
+   <label class="l">しゃしん（なくてもOK）</label>
+   <div class="btn-row"><button class="btn ghost" id="b-cam">📸 とる</button><label class="btn ghost" for="f-lib" role="button">🖼️ アルバム</label></div>
+   <div id="pwrap" class="hidden"><img class="pv" id="rpv" alt=""><button class="btn ghost" id="b-pdel" style="margin-top:.5rem">✖ しゃしんを はずす</button></div>
+   <button class="btn ghost" id="b-more">＋ くわしく書く（任意）</button>
+   <div id="more" class="hidden">
+    <label class="l" for="rfeat">とくちょう</label><input type="text" id="rfeat" maxlength="60" placeholder="例：赤い紙袋、持ち手が白">
+    <label class="l" for="rplace">どこで？</label><input type="text" id="rplace" maxlength="40" placeholder="例：駅前のお菓子屋さん">
+   </div>
+   <button class="huge" id="b-rsave" style="margin:.8rem 0 0">⚔️ そうびする！</button></div>
   <button class="huge sos" id="b-sos">🆘 SOS（わすれた！）</button>
   <div class="win"><div class="ttl">🎒 いまの臨時装備（<span id="cnt">0</span>）</div><div id="list"></div></div>
   <div class="win"><div class="ttl">🔔 ロックがめんの つうち</div><p id="nst" class="empty" style="padding-top:0"></p>
@@ -115,23 +126,9 @@ footer a{color:#cfd6ff}
  </div>
 </div>
 
-<div class="ov" id="m-reg"><div class="box">
- <h2>⚔️ 臨時装備を登録</h2>
- <img class="pv" id="rpv" alt="">
- <label class="l" for="rname">なまえ</label>
- <input type="text" id="rname" maxlength="30" placeholder="例：お土産の箱">
- <div class="chips" id="chips"></div>
- <button class="btn ghost" id="b-more">＋ くわしく書く（任意）</button>
- <div id="more" class="hidden">
-  <label class="l" for="rfeat">とくちょう</label><input type="text" id="rfeat" maxlength="60" placeholder="例：赤い紙袋、持ち手が白">
-  <label class="l" for="rplace">どこで？</label><input type="text" id="rplace" maxlength="40" placeholder="例：駅前のお菓子屋さん">
- </div>
- <div class="btn-row" style="margin-top:.8rem"><button class="btn ghost" id="b-rcancel">やめる</button><button class="btn go" id="b-rsave">⚔️ そうびする！</button></div>
-</div></div>
-
 <div class="ov" id="m-help"><div class="box">
  <h2>❓ つかいかた</h2>
- <ul><li>出先で荷物が増えたら「📸 しゃしんを とる」で撮影（アルバムからもえらべます）。</li><li>名前を入れて「そうびする！」で、ロック画面に通知が出ます。</li><li>忘れたら「SOS」から写真つきカードを見せましょう。</li><li>カバンにしまったら「そうび解除」で通知とデータが消えます。</li></ul>
+ <ul><li>出先で荷物が増えたら、名前を入れて「そうびする！」。ロック画面に通知が出ます。</li><li>写真は「📸 とる」か「🖼️ アルバム」で追加できます（なくてもOK）。写真があれば通知やカードにも出ます。</li><li>忘れたら「SOS」から写真つきカードを見せましょう。</li><li>カバンにしまったら「そうび解除」で通知とデータが消えます。</li></ul>
  <p>※ブラウザの通知は、完全に消せない通知にはできません。スワイプで消しても出し直しますが、端末や設定によっては表示されないことがあります。iPhoneはホーム画面に追加したアプリで有効です。</p>
  <button class="btn" id="b-hclose">とじる</button>
 </div></div>
@@ -235,7 +232,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var l = $('list'); if (!l) return;
     $('cnt').textContent = items.length;
     l.innerHTML = '';
-    if (!items.length) { l.innerHTML = '<p class="empty">まだ臨時装備は ありません。荷物が増えたら「しゃしんを とる」！</p>'; }
+    if (!items.length) { l.innerHTML = '<p class="empty">まだ臨時装備は ありません。荷物が増えたら、名前を入れて「そうびする！」</p>'; }
     items.forEach(function (it) {
       var d = document.createElement('div'); d.className = 'item';
       d.innerHTML = '<div class="item-top"><div class="thumb">🎁</div><div><div class="iname">' + esc(it.name) + '</div><div class="imeta">' + esc(fmt(it.createdAt)) + ' とうろく' + (it.place ? '<br>📍 ' + esc(it.place) : '') + (it.feature ? '<br>🔎 ' + esc(it.feature) : '') + '</div></div></div>';
@@ -284,18 +281,16 @@ document.addEventListener('DOMContentLoaded', function () {
   var pending = null, chipList = ['お土産の箱', '紙袋', '買い物袋', 'お菓子', '傘', 'その他'];
   var ch = $('chips');
   if (ch) chipList.forEach(function (n) { var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = n; b.addEventListener('click', function () { $('rname').value = n; }); ch.appendChild(b); });
-  function reg(s) {
-    pending = s; $('rpv').src = s.photo; $('rname').value = ''; $('rfeat').value = ''; $('rplace').value = ''; $('more').classList.add('hidden'); openM('m-reg');
-    setTimeout(function () { try { $('rname').focus(); } catch (e) {} }, 150);
-  }
+  function reg(s) { pending = s; $('rpv').src = s.photo; $('pwrap').classList.remove('hidden'); say('📎 しゃしんを つけました'); }
+  on('b-pdel', 'click', function () { pending = null; $('pwrap').classList.add('hidden'); });
+  on('rname', 'keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); var b = $('b-rsave'); if (b) b.click(); } });
   on('b-more', 'click', function () { $('more').classList.toggle('hidden'); });
   on('b-rcancel', 'click', function () { pending = null; closeM('m-reg'); });
   on('b-rsave', 'click', function () {
-    if (!pending) return;
     var it = { id: uid(), name: ($('rname').value.trim() || 'あたらしいなかま').slice(0, 30), feature: $('rfeat').value.trim(), place: $('rplace').value.trim(), createdAt: Date.now() };
-    putPhoto(it.id, pending); pending = null; items.unshift(it); save();
+    if (pending) putPhoto(it.id, pending); pending = null; items.unshift(it); save();
     uState(function (s) { if (s.active.indexOf(it.id) < 0) s.active.push(it.id); });
-    closeM('m-reg'); render(); say('⚔️ ' + it.name + ' を そうびした！');
+    $('rname').value = ''; $('rfeat').value = ''; $('rplace').value = ''; $('more').classList.add('hidden'); $('pwrap').classList.add('hidden'); render(); say('⚔️ ' + it.name + ' を そうびした！');
     function after() { notify(it, false).then(function () { nst(); if (perm() === 'granted') say('🔔 ロックがめんに つうちを セットしたよ！'); }); }
     if (perm() === 'default') ask().then(after); else after();
   });
